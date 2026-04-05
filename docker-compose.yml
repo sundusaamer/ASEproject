@@ -1,0 +1,18 @@
+
+services:
+  mysql_db:
+    image: mysql:8.0
+    container_name: wasel_palestine_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: wasel_db
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_USER: wasel_user
+      MYSQL_PASSWORD: user_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+volumes:
+  db_data:
