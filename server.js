@@ -30,5 +30,7 @@ const startServer = async () => {
     console.error(' Unable to connect to the database:', error);
   }
 };
+const checkpointRoutes = require('./routes/checkpointRoutes');
 
+app.use('/api/v1/checkpoints', checkpointRoutes);
 startServer();
