@@ -14,14 +14,13 @@ app.use(cors());
 app.use(express.json());
 
 // --- API Routes ---
-
+// Routes
+app.use('/api/v1/external', require('./routes/externalRoutes'));
 // Basic Welcome Route
 app.get('/', (req, res) => {
   res.json({ message: "Welcome to Wasel Palestine API 🇵🇸" });
 });
 
-// مثال بسيط لكيفية عمل Route مستقبلاً (اختياري)
-// app.get('/api/weather', async (req, res) => { ... });
 
 // --- Database & Server Start ---
 const startServer = async () => {
