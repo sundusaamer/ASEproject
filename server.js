@@ -10,9 +10,12 @@ app.use(express.json());
 
 
 app.get('/', (req, res) => {
-  res.json({ message: "Welcome to Wasel Palestine API 🇵🇸" });
+  res.json({ message: "Welcome to Wasel Palestine API " });
 });
 
+app.get('/test', (req, res) => {
+  res.send('Server is working!');
+});
 
 const startServer = async () => {
   try {
@@ -33,4 +36,18 @@ const startServer = async () => {
 const checkpointRoutes = require('./routes/checkpointRoutes');
 
 app.use('/api/v1/checkpoints', checkpointRoutes);
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+const reportRoutes = require('./routes/reportRoutes');
+
+app.use('/api/v1/reports', reportRoutes);
+
+app.post('/api/v1/reports', (req, res) => {
+  res.send('it works');
+});
+
 startServer();
