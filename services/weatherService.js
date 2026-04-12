@@ -11,7 +11,7 @@ const getWeather = async (city) => {
                 q: city,       // اسم المدينة (مثلاً: Ramallah)
                 appid: API_KEY,
                 units: 'metric', // لكي تظهر درجة الحرارة مئوية
-                lang: 'ar'       // لكي يظهر وصف الطقس بالعربي
+                lang: 'en'       // لكي يظهر وصف الطقس بالعربي
             }
         });
 

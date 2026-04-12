@@ -1,0 +1,20 @@
+services:
+  mysql_db:
+    image: mariadb:11
+    platform: linux/amd64
+    container_name: wasel_palestine_db
+    restart: always
+    environment:
+      MARIADB_DATABASE: ase_dp
+      MARIADB_DATABASE: ase_dp
+      MARIADB_ROOT_PASSWORD: root_password
+      MARIADB_USER: wasel_user
+      MARIADB_PASSWORD: user_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./init-db:/docker-entrypoint-initdb.d
+
+volumes:
+  db_data:
