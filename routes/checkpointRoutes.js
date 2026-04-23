@@ -14,6 +14,7 @@ router.post('/', cpController.createCheckpoint);
 router.patch(
   '/:id/status',
   authMiddleware.protect,
+  authMiddleware.restrictTo('admin'),
   cpController.updateCheckpointStatus
 );
 

@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/user');
 
-exports.protect = (req, res, next) => {
+// ================= PROTECT =================
+exports.protect = async (req, res, next) => {
   try {
     let token;
 
-    // قراءة التوكن من Header
+    // قراءة التوكن
     if (
       req.headers.authorization &&
       req.headers.authorization.startsWith('Bearer')
@@ -12,7 +14,7 @@ exports.protect = (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
     }
 
-    // إذا ما في توكن
+    // إذا لا يوجد توكن
     if (!token) {
       return res.status(401).json({
         status: 'fail',
@@ -20,11 +22,21 @@ exports.protect = (req, res, next) => {
       });
     }
 
-    // التحقق من التوكن
+    // فك التوكن
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // حفظ بيانات المستخدم داخل req
-    req.user = decoded;
+    // جلب المستخدم من قاعدة البيانات
+    const currentUser = await User.findByPk(decoded.id);
+
+    if (!currentUser) {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'User no longer exists'
+      });
+    }
+
+    // تخزين المستخدم داخل الطلب
+    req.user = currentUser;
 
     next();
 
@@ -34,4 +46,19 @@ exports.protect = (req, res, next) => {
       message: 'Invalid token'
     });
   }
+};
+
+// ================= ADMIN / ROLE CHECK =================
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+
+    if (!roles.includes(req.user.role)) {
+      return res.status(403).json({
+        status: 'fail',
+        message: 'You do not have permission'
+      });
+    }
+
+    next();
+  };
 };

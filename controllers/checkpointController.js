@@ -1,4 +1,5 @@
 const Checkpoint = require('../models/Checkpoint');
+const AuditLog = require('../models/AuditLog');
 
 // ================= GET ALL =================
 exports.getAllCheckpoints = async (req, res) => {
@@ -66,6 +67,13 @@ exports.updateCheckpointStatus = async (req, res) => {
     checkpoint.last_updated_at = new Date();
 
     await checkpoint.save();
+
+    // Audit Log
+    await AuditLog.create({
+      action: 'UPDATE_STATUS',
+      user_id: req.user.id,
+      details: `Checkpoint ${id} changed to ${status}`
+    });
 
     res.status(200).json({
       status: 'success',

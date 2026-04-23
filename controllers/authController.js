@@ -1,15 +1,18 @@
+
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-
 // ================= REGISTER =================
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
-    // التحقق إذا الإيميل موجود
-    const existingUser = await User.findOne({ where: { email } });
+    // التأكد إذا الإيميل موجود
+    const existingUser = await User.findOne({
+      where: { email }
+    });
+
     if (existingUser) {
       return res.status(400).json({
         status: 'fail',
@@ -17,14 +20,13 @@ exports.register = async (req, res) => {
       });
     }
 
-    // تشفير الباسورد
-  
-
-const user = await User.create({
-  username: name,
-  email: email,
-  password_hash: password
-});
+    // إنشاء المستخدم
+    const user = await User.create({
+      username: name,
+      email: email,
+      password_hash: password,
+      role: role || 'citizen'
+    });
 
     res.status(201).json({
       status: 'success',
@@ -40,14 +42,15 @@ const user = await User.create({
   }
 };
 
-
 // ================= LOGIN =================
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // التأكد من المستخدم
-    const user = await User.findOne({ where: { email } });
+    // البحث عن المستخدم
+    const user = await User.findOne({
+      where: { email }
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -57,7 +60,10 @@ exports.login = async (req, res) => {
     }
 
     // مقارنة الباسورد
-    const isMatch = await bcrypt.compare(password, user.password_hash)
+    const isMatch = await bcrypt.compare(
+      password,
+      user.password_hash
+    );
 
     if (!isMatch) {
       return res.status(400).json({
@@ -68,9 +74,13 @@ exports.login = async (req, res) => {
 
     // إنشاء التوكن
     const token = jwt.sign(
-      { id: user.id },
+      {
+        id: user.id
+      },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRE }
+      {
+        expiresIn: process.env.JWT_EXPIRE
+      }
     );
 
     res.status(200).json({
@@ -86,3 +96,4 @@ exports.login = async (req, res) => {
     });
   }
 };
+
