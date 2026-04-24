@@ -1,4 +1,3 @@
-
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -8,7 +7,6 @@ exports.register = async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
-    // التأكد إذا الإيميل موجود
     const existingUser = await User.findOne({
       where: { email }
     });
@@ -20,7 +18,6 @@ exports.register = async (req, res) => {
       });
     }
 
-    // إنشاء المستخدم
     const user = await User.create({
       username: name,
       email: email,
@@ -47,7 +44,6 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // البحث عن المستخدم
     const user = await User.findOne({
       where: { email }
     });
@@ -59,7 +55,6 @@ exports.login = async (req, res) => {
       });
     }
 
-    // مقارنة الباسورد
     const isMatch = await bcrypt.compare(
       password,
       user.password_hash
@@ -72,21 +67,33 @@ exports.login = async (req, res) => {
       });
     }
 
-    // إنشاء التوكن
-    const token = jwt.sign(
+    // Access Token
+    const accessToken = jwt.sign(
       {
         id: user.id
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: process.env.JWT_EXPIRE
+        expiresIn: '1h'
+      }
+    );
+
+    // Refresh Token
+    const refreshToken = jwt.sign(
+      {
+        id: user.id
+      },
+      process.env.JWT_REFRESH_SECRET,
+      {
+        expiresIn: '7d'
       }
     );
 
     res.status(200).json({
       status: 'success',
       message: 'Login successful',
-      token: token
+      accessToken,
+      refreshToken
     });
 
   } catch (error) {
@@ -96,4 +103,3 @@ exports.login = async (req, res) => {
     });
   }
 };
-
