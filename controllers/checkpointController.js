@@ -1,4 +1,5 @@
-// Import models from the index file to ensure associations are properly loaded
+// 1. Import models from the index file to ensure associations are properly loaded
+// We use StatusHistory as per our architected database schema
 const { Checkpoint, StatusHistory } = require('../models');
 
 /**
@@ -32,6 +33,21 @@ exports.getAllCheckpoints = async (req, res) => {
 };
 
 /**
+ * @desc    Create a new checkpoint (Standard operation)
+ */
+exports.createCheckpoint = async (req, res) => {
+  try {
+    const checkpoint = await Checkpoint.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      data: checkpoint
+    });
+  } catch (error) {
+    res.status(500).json({ status: 'error', message: error.message });
+  }
+};
+
+/**
  * @desc    Update checkpoint status and log history (Auditing)
  * @route   PATCH /api/v1/checkpoints/:id
  */
@@ -47,11 +63,11 @@ exports.updateCheckpointStatus = async (req, res) => {
 
     // 1. Update the main Checkpoint record
     checkpoint.current_status = status;
-    checkpoint.last_apdated_at = new Date();
+    checkpoint.last_updated_at = new Date();
     await checkpoint.save();
 
     // 2. Automatically create a Status History record (Auditing Logic)
-    // This ensures full traceability of status changes for each checkpoint
+    // We stick to StatusHistory to maintain traceability for each checkpoint
     await StatusHistory.create({
       checkpoint_id: id,
       status: status,
