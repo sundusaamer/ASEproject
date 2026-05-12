@@ -1,7 +1,7 @@
 CREATE DATABASE  IF NOT EXISTS `ase_dp` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `ase_dp`;
 -- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
---س
+--
 -- Host: localhost    Database: ase_dp
 -- ------------------------------------------------------
 -- Server version	8.0.45
@@ -246,5 +246,3 @@ UNLOCK TABLES;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2026-04-04 22:08:46
